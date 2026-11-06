@@ -10,6 +10,15 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout producer head at base repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          sparse-checkout: package.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Record checked-out version
+        run: jq -r .version package.json
       - name: Record event shape
         env:
           EVENT_NAME: ${{ github.event.workflow_run.event }}
